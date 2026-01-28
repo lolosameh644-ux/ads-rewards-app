@@ -7,7 +7,7 @@ interface WithdrawalRequest {
   points: number;
   amountUsd: string;
   method: "instapay" | "vodafone_cash" | "paypal";
-  contactInfo: string;
+  methodDetails: string;
   status: "pending" | "approved" | "rejected";
   createdAt: Date;
 }
@@ -83,7 +83,7 @@ export function WithdrawalRequestCard({ request }: WithdrawalRequestCardProps) {
           <Text className="text-muted text-sm">
             {request.method === "paypal" ? "البريد: " : "الرقم: "}
           </Text>
-          <Text className="text-foreground text-sm">{request.contactInfo}</Text>
+          <Text className="text-foreground text-sm">{request.methodDetails}</Text>
         </View>
         <View className="flex-row">
           <Text className="text-muted text-sm">التاريخ: </Text>

@@ -15,6 +15,13 @@
       "when": 1769624963284,
       "tag": "0001_petite_jimmy_woo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1769632098860,
+      "tag": "0002_amazing_steve_rogers",
+      "breakpoints": true
     }
   ]
 }

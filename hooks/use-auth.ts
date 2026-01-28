@@ -82,21 +82,7 @@ export function useAuth(options?: UseAuthOptions) {
     }
   }, []);
 
-  const loginAsGuest = useCallback(() => {
-    const guestUser: Auth.User = {
-      id: -1,
-      openId: `guest_${Date.now()}`,
-      name: "مستخدم ضيف",
-      email: null,
-      loginMethod: "guest",
-      role: "user",
-      lastSignedIn: new Date(),
-    };
-    setUser(guestUser);
-    setIsGuest(true);
-    setLoading(false);
-    console.log("[useAuth] Guest login successful");
-  }, []);
+
 
   const logout = useCallback(async () => {
     try {
@@ -161,6 +147,5 @@ export function useAuth(options?: UseAuthOptions) {
     isGuest,
     refresh: fetchUser,
     logout,
-    loginAsGuest,
   };
 }

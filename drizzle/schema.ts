@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { boolean, int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -17,6 +17,12 @@ export const users = mysqlTable("users", {
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
+  // VPN Detection fields
+  isVpnUser: boolean("isVpnUser").default(false).notNull(),
+  fraudScore: int("fraudScore").default(0).notNull(),
+  lastIpAddress: varchar("lastIpAddress", { length: 45 }),
+  isBlocked: boolean("isBlocked").default(false).notNull(),
+  blockReason: varchar("blockReason", { length: 255 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
@@ -49,25 +55,23 @@ export const withdrawalRequests = mysqlTable("withdrawal_requests", {
   points: int("points").notNull(),
   amountUsd: varchar("amountUsd", { length: 20 }).notNull(),
   method: mysqlEnum("method", ["instapay", "vodafone_cash", "paypal"]).notNull(),
-  contactInfo: varchar("contactInfo", { length: 255 }).notNull(),
+  methodDetails: varchar("methodDetails", { length: 255 }).notNull(),
   status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-  processedAt: timestamp("processedAt"),
 });
 
 export type WithdrawalRequest = typeof withdrawalRequests.$inferSelect;
 export type InsertWithdrawalRequest = typeof withdrawalRequests.$inferInsert;
 
 /**
- * Ad views table - tracks ad views for analytics
+ * Ad views table - tracks ad views for each user
  */
 export const adViews = mysqlTable("ad_views", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
-  adId: varchar("adId", { length: 255 }),
-  pointsEarned: int("pointsEarned").default(1).notNull(),
-  viewedAt: timestamp("viewedAt").defaultNow().notNull(),
+  adId: varchar("adId", { length: 255 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
 export type AdView = typeof adViews.$inferSelect;

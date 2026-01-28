@@ -231,7 +231,7 @@ export default function AdminScreen() {
                           <Text className="text-muted text-sm">
                             {request.method === "paypal" ? "البريد: " : "الرقم: "}
                           </Text>
-                          <Text className="text-foreground text-sm">{request.contactInfo}</Text>
+                          <Text className="text-foreground text-sm">{request.methodDetails}</Text>
                         </View>
                         <View className="flex-row">
                           <Text className="text-muted text-sm">التاريخ: </Text>

@@ -11,7 +11,7 @@ import { useColors } from "@/hooks/use-colors";
 
 export default function HomeScreen() {
   const colors = useColors();
-  const { user, isAuthenticated, loading: authLoading, loginAsGuest, isGuest } = useAuth();
+  const { user, isAuthenticated, loading: authLoading, isGuest } = useAuth();
   const [isLoadingAd, setIsLoadingAd] = useState(false);
   const [guestPoints, setGuestPoints] = useState(0);
 
@@ -95,30 +95,13 @@ export default function HomeScreen() {
               <Text className="text-white font-bold text-lg text-center">تسجيل الدخول</Text>
             </TouchableOpacity>
 
-            {/* Divider */}
-            <View className="flex-row items-center gap-3 w-full">
-              <View className="flex-1 h-px bg-border" />
-              <Text className="text-muted">أو</Text>
-              <View className="flex-1 h-px bg-border" />
-            </View>
-
-            {/* Guest Login Button */}
-            <TouchableOpacity
-              onPress={loginAsGuest}
-              className="w-full bg-surface border-2 border-primary px-8 py-4 rounded-full active:opacity-80"
-            >
-              <Text className="text-primary font-bold text-lg text-center">
-                تجربة بدون تسجيل
-              </Text>
-            </TouchableOpacity>
-
             {/* Info Box */}
-            <View className="bg-surface rounded-2xl p-6 border border-border w-full mt-4">
+            <View className="bg-primary/10 rounded-2xl p-6 border border-primary/20 w-full mt-4">
               <Text className="text-foreground text-sm font-semibold mb-3">
-                ملاحظة: وضع التجربة
+                ✓ سجل دخولك الآن
               </Text>
               <Text className="text-muted text-xs leading-relaxed">
-                يمكنك تجربة التطبيق بدون تسجيل دخول. البيانات في هذا الوضع محلية ولن يتم حفظها.
+                قم بتسجيل الدخول للبدء في كسب النقاط والأرباح من خلال مشاهدة الإعلانات.
               </Text>
             </View>
           </View>

@@ -74,6 +74,14 @@ export const appRouter = router({
         contactInfo: z.string().min(1),
       }))
       .mutation(async ({ ctx, input }) => {
+        // Check if user is blocked or using VPN
+        if (ctx.user.isBlocked) {
+          throw new Error(`Account blocked: ${ctx.user.blockReason || "Suspicious activity detected"}`);
+        }
+        if (ctx.user.isVpnUser) {
+          throw new Error("VPN usage detected. Withdrawals are not allowed while using VPN.");
+        }
+
         // Check if user has enough points
         const userPoints = await db.getUserPoints(ctx.user.id);
         if (!userPoints || userPoints.points < input.points) {
@@ -92,7 +100,7 @@ export const appRouter = router({
           points: input.points,
           amountUsd,
           method: input.method,
-          contactInfo: input.contactInfo,
+          methodDetails: input.contactInfo,
           status: "pending",
         });
 

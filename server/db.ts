@@ -231,7 +231,7 @@ export async function updateWithdrawalStatus(
   await db.update(withdrawalRequests)
     .set({ 
       status,
-      processedAt: new Date(),
+      updatedAt: new Date(),
     })
     .where(eq(withdrawalRequests.id, requestId));
 }
@@ -283,7 +283,7 @@ export async function getUserAdViewsToday(userId: number) {
 
   const result = await db.select().from(adViews).where(eq(adViews.userId, userId));
   const todayViews = result.filter(view => {
-    const viewDate = new Date(view.viewedAt);
+    const viewDate = new Date(view.createdAt);
     return viewDate >= today;
   });
 
