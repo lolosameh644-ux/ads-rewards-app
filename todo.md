@@ -41,9 +41,10 @@
 - [x] تحديث Tab Navigation في _layout.tsx
 
 ## Phase 6: Unity Ads Integration
-- [x] إنشاء دليل Unity Ads Setup
-- [x] نظام محاكاة الإعلانات يعمل بشكل كامل
-- [ ] (اختياري) تثبيت Unity Ads الحقيقي حسب الدليل
+- [x] تثبيت expo-ads-admob
+- [x] إنشاء UnityAdsManager لإدارة الإعلانات
+- [x] ربط Rewarded_Android بزر مشاهدة الإعلان
+- [x] تحديث app.config.ts بإضافة expo-ads-admob plugin
 
 ## Phase 7: Admin Features
 - [x] إضافة صفحة إدارة المستخدمين

@@ -87,6 +87,13 @@ const config: ExpoConfig = {
   plugins: [
     "expo-router",
     [
+      "expo-ads-admob",
+      {
+        androidAppId: "ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy",
+        iosAppId: "ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy",
+      },
+    ],
+    [
       "expo-audio",
       {
         microphonePermission: "Allow $(PRODUCT_NAME) to access your microphone.",

@@ -1,8 +1,10 @@
-import { TouchableOpacity, Text, View, ActivityIndicator } from "react-native";
+import { TouchableOpacity, Text, View, ActivityIndicator, Alert } from "react-native";
 import { IconSymbol } from "./ui/icon-symbol";
 import { useColors } from "@/hooks/use-colors";
 import * as Haptics from "expo-haptics";
 import { Platform } from "react-native";
+import { useState, useEffect } from "react";
+import { unityAdsManager } from "@/lib/unity-ads-manager";
 
 interface WatchAdButtonProps {
   onPress: () => void;
@@ -12,25 +14,65 @@ interface WatchAdButtonProps {
 
 export function WatchAdButton({ onPress, loading = false, disabled = false }: WatchAdButtonProps) {
   const colors = useColors();
+  const [isShowingAd, setIsShowingAd] = useState(false);
 
-  const handlePress = () => {
+  useEffect(() => {
+    // Initialize Unity Ads when component mounts
     if (Platform.OS !== "web") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      unityAdsManager.initialize().catch((error) => {
+        console.error("Failed to initialize Unity Ads:", error);
+      });
     }
-    onPress();
+  }, []);
+
+  const handlePress = async () => {
+    if (Platform.OS !== "web") {
+      try {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      } catch (error) {
+        console.error("Haptics error:", error);
+      }
+    }
+
+    setIsShowingAd(true);
+
+    try {
+      if (Platform.OS === "web") {
+        // For web, use simulation
+        setTimeout(() => {
+          onPress();
+          setIsShowingAd(false);
+        }, 2000);
+      } else {
+        // For native, use real Unity Ads
+        const success = await unityAdsManager.showRewardedAd();
+
+        if (success) {
+          onPress();
+        } else {
+          Alert.alert("خطأ", "فشل تحميل الإعلان. حاول مرة أخرى.");
+        }
+
+        setIsShowingAd(false);
+      }
+    } catch (error) {
+      console.error("Error showing ad:", error);
+      Alert.alert("خطأ", "حدث خطأ أثناء عرض الإعلان");
+      setIsShowingAd(false);
+    }
   };
 
   return (
     <TouchableOpacity
       onPress={handlePress}
-      disabled={loading || disabled}
+      disabled={loading || disabled || isShowingAd}
       className="bg-success rounded-3xl p-8 shadow-xl active:opacity-80"
       style={{
-        transform: [{ scale: loading || disabled ? 0.95 : 1 }],
+        transform: [{ scale: loading || disabled || isShowingAd ? 0.95 : 1 }],
       }}
     >
       <View className="items-center">
-        {loading ? (
+        {loading || isShowingAd ? (
           <ActivityIndicator size="large" color="white" />
         ) : (
           <>
