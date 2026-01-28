@@ -56,7 +56,7 @@ export default function WithdrawScreen() {
             تسجيل الدخول مطلوب
           </Text>
           <Text className="text-base text-muted text-center">
-            يرجى تسجيل الدخول لعرض صفحة السحب
+            يرجى تسجيل الدخول لعرض صفحة السحب والحصول على أرباحك
           </Text>
           <TouchableOpacity
             onPress={() => router.push("/oauth/callback")}

@@ -50,7 +50,7 @@ export default function ProfileScreen() {
             تسجيل الدخول مطلوب
           </Text>
           <Text className="text-base text-muted text-center">
-            يرجى تسجيل الدخول لعرض الملف الشخصي
+            يرجى تسجيل الدخول لعرض الملف الشخصي وحفظ أرباحك
           </Text>
           <TouchableOpacity
             onPress={() => router.push("/oauth/callback")}

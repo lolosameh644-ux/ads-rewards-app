@@ -7,22 +7,25 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/hooks/use-auth";
 import { TouchableOpacity } from "react-native";
 import { router } from "expo-router";
+import { useColors } from "@/hooks/use-colors";
 
 export default function HomeScreen() {
-  const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const colors = useColors();
+  const { user, isAuthenticated, loading: authLoading, loginAsGuest, isGuest } = useAuth();
   const [isLoadingAd, setIsLoadingAd] = useState(false);
+  const [guestPoints, setGuestPoints] = useState(0);
 
-  // Get user points
+  // Get user points (only for authenticated users)
   const { data: points, refetch: refetchPoints } = trpc.points.get.useQuery(undefined, {
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !isGuest,
   });
 
-  // Get ad views count
+  // Get ad views count (only for authenticated users)
   const { data: adViews, refetch: refetchAdViews } = trpc.points.adViews.useQuery(undefined, {
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !isGuest,
   });
 
-  // Add points mutation
+  // Add points mutation (only for authenticated users)
   const addPointsMutation = trpc.points.add.useMutation({
     onSuccess: () => {
       refetchPoints();
@@ -42,13 +45,20 @@ export default function HomeScreen() {
 
     setIsLoadingAd(true);
 
-    // Simulate ad watching (Unity Ads will be integrated later)
+    // Simulate ad watching
     setTimeout(async () => {
       try {
-        await addPointsMutation.mutateAsync({
-          points: 1,
-          adId: `ad_${Date.now()}`,
-        });
+        if (isGuest) {
+          // For guest users, just add to local state
+          setGuestPoints((prev) => prev + 1);
+          Alert.alert("تم!", "تمت إضافة نقطة واحدة إلى رصيدك");
+        } else {
+          // For authenticated users, add to database
+          await addPointsMutation.mutateAsync({
+            points: 1,
+            adId: `ad_${Date.now()}`,
+          });
+        }
       } catch (error) {
         console.error("Error adding points:", error);
       } finally {
@@ -68,23 +78,58 @@ export default function HomeScreen() {
   if (!isAuthenticated) {
     return (
       <ScreenContainer className="items-center justify-center p-6">
-        <View className="items-center gap-4">
-          <Text className="text-4xl font-bold text-foreground text-center">
-            مرحباً بك في تطبيق الأرباح
-          </Text>
-          <Text className="text-lg text-muted text-center">
-            شاهد الإعلانات واربح المال
-          </Text>
-          <TouchableOpacity
-            onPress={() => router.push("/oauth/callback")}
-            className="bg-primary px-8 py-4 rounded-full mt-4 active:opacity-80"
-          >
-            <Text className="text-white font-bold text-lg">تسجيل الدخول</Text>
-          </TouchableOpacity>
-        </View>
+        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}>
+          <View className="items-center gap-6">
+            <Text className="text-4xl font-bold text-foreground text-center">
+              مرحباً بك في تطبيق الأرباح
+            </Text>
+            <Text className="text-lg text-muted text-center">
+              شاهد الإعلانات واربح المال
+            </Text>
+
+            {/* Login Button */}
+            <TouchableOpacity
+              onPress={() => router.push("/oauth/callback")}
+              className="w-full bg-primary px-8 py-4 rounded-full active:opacity-80"
+            >
+              <Text className="text-white font-bold text-lg text-center">تسجيل الدخول</Text>
+            </TouchableOpacity>
+
+            {/* Divider */}
+            <View className="flex-row items-center gap-3 w-full">
+              <View className="flex-1 h-px bg-border" />
+              <Text className="text-muted">أو</Text>
+              <View className="flex-1 h-px bg-border" />
+            </View>
+
+            {/* Guest Login Button */}
+            <TouchableOpacity
+              onPress={loginAsGuest}
+              className="w-full bg-surface border-2 border-primary px-8 py-4 rounded-full active:opacity-80"
+            >
+              <Text className="text-primary font-bold text-lg text-center">
+                تجربة بدون تسجيل
+              </Text>
+            </TouchableOpacity>
+
+            {/* Info Box */}
+            <View className="bg-surface rounded-2xl p-6 border border-border w-full mt-4">
+              <Text className="text-foreground text-sm font-semibold mb-3">
+                ملاحظة: وضع التجربة
+              </Text>
+              <Text className="text-muted text-xs leading-relaxed">
+                يمكنك تجربة التطبيق بدون تسجيل دخول. البيانات في هذا الوضع محلية ولن يتم حفظها.
+              </Text>
+            </View>
+          </View>
+        </ScrollView>
       </ScreenContainer>
     );
   }
+
+  const displayPoints = isGuest ? guestPoints : points?.points || 0;
+  const displayTotalEarned = isGuest ? 0 : points?.totalEarned || 0;
+  const displayTotalWithdrawn = isGuest ? 0 : points?.totalWithdrawn || 0;
 
   return (
     <ScreenContainer className="p-6">
@@ -95,23 +140,26 @@ export default function HomeScreen() {
             <Text className="text-3xl font-bold text-foreground">
               مرحباً {user?.name || "بك"}
             </Text>
+            {isGuest && (
+              <View className="bg-warning/10 px-3 py-1 rounded-full mt-2">
+                <Text className="text-warning text-xs font-semibold">وضع التجربة</Text>
+              </View>
+            )}
             <Text className="text-base text-muted mt-1">شاهد الإعلانات واربح النقاط</Text>
           </View>
 
           {/* Points Card */}
-          {points && (
-            <PointsCard
-              points={points.points}
-              totalEarned={points.totalEarned}
-              totalWithdrawn={points.totalWithdrawn}
-            />
-          )}
+          <PointsCard
+            points={displayPoints}
+            totalEarned={displayTotalEarned}
+            totalWithdrawn={displayTotalWithdrawn}
+          />
 
           {/* Watch Ad Button */}
           <WatchAdButton onPress={handleWatchAd} loading={isLoadingAd} />
 
           {/* Ad Views Counter */}
-          {adViews && (
+          {!isGuest && adViews && (
             <View className="bg-surface rounded-2xl p-4">
               <View className="flex-row justify-between items-center">
                 <View>
@@ -146,6 +194,19 @@ export default function HomeScreen() {
               </View>
             </View>
           </View>
+
+          {/* Guest Mode Warning */}
+          {isGuest && (
+            <View className="bg-warning/10 rounded-2xl p-4 border border-warning/20">
+              <Text className="text-warning text-sm font-semibold mb-2">
+                ⚠️ تنبيه: وضع التجربة
+              </Text>
+              <Text className="text-warning text-xs">
+                أنت تستخدم التطبيق في وضع التجربة. البيانات محلية ولن يتم حفظها. لحفظ أرباحك،
+                يرجى تسجيل الدخول.
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </ScreenContainer>

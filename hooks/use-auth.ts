@@ -12,6 +12,7 @@ export function useAuth(options?: UseAuthOptions) {
   const [user, setUser] = useState<Auth.User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [isGuest, setIsGuest] = useState(false);
 
   const fetchUser = useCallback(async () => {
     console.log("[useAuth] fetchUser called");
@@ -81,9 +82,27 @@ export function useAuth(options?: UseAuthOptions) {
     }
   }, []);
 
+  const loginAsGuest = useCallback(() => {
+    const guestUser: Auth.User = {
+      id: -1,
+      openId: `guest_${Date.now()}`,
+      name: "مستخدم ضيف",
+      email: null,
+      loginMethod: "guest",
+      role: "user",
+      lastSignedIn: new Date(),
+    };
+    setUser(guestUser);
+    setIsGuest(true);
+    setLoading(false);
+    console.log("[useAuth] Guest login successful");
+  }, []);
+
   const logout = useCallback(async () => {
     try {
-      await Api.logout();
+      if (!isGuest) {
+        await Api.logout();
+      }
     } catch (err) {
       console.error("[Auth] Logout API call failed:", err);
       // Continue with logout even if API call fails
@@ -92,8 +111,9 @@ export function useAuth(options?: UseAuthOptions) {
       await Auth.clearUserInfo();
       setUser(null);
       setError(null);
+      setIsGuest(false);
     }
-  }, []);
+  }, [isGuest]);
 
   const isAuthenticated = useMemo(() => Boolean(user), [user]);
 
@@ -138,7 +158,9 @@ export function useAuth(options?: UseAuthOptions) {
     loading,
     error,
     isAuthenticated,
+    isGuest,
     refresh: fetchUser,
     logout,
+    loginAsGuest,
   };
 }
