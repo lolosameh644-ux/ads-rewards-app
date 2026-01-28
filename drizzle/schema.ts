@@ -25,4 +25,50 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/**
+ * User points table - tracks points balance for each user
+ */
+export const userPoints = mysqlTable("user_points", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  points: int("points").default(0).notNull(),
+  totalEarned: int("totalEarned").default(0).notNull(),
+  totalWithdrawn: int("totalWithdrawn").default(0).notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserPoints = typeof userPoints.$inferSelect;
+export type InsertUserPoints = typeof userPoints.$inferInsert;
+
+/**
+ * Withdrawal requests table - stores withdrawal requests from users
+ */
+export const withdrawalRequests = mysqlTable("withdrawal_requests", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  points: int("points").notNull(),
+  amountUsd: varchar("amountUsd", { length: 20 }).notNull(),
+  method: mysqlEnum("method", ["instapay", "vodafone_cash", "paypal"]).notNull(),
+  contactInfo: varchar("contactInfo", { length: 255 }).notNull(),
+  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  processedAt: timestamp("processedAt"),
+});
+
+export type WithdrawalRequest = typeof withdrawalRequests.$inferSelect;
+export type InsertWithdrawalRequest = typeof withdrawalRequests.$inferInsert;
+
+/**
+ * Ad views table - tracks ad views for analytics
+ */
+export const adViews = mysqlTable("ad_views", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  adId: varchar("adId", { length: 255 }),
+  pointsEarned: int("pointsEarned").default(1).notNull(),
+  viewedAt: timestamp("viewedAt").defaultNow().notNull(),
+});
+
+export type AdView = typeof adViews.$inferSelect;
+export type InsertAdView = typeof adViews.$inferInsert;
