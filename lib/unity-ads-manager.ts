@@ -11,7 +11,7 @@ const TEST_REWARDED_AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
 class UnityAdsManager {
   private isInitialized = false;
   private isAdLoading = false;
-  private isTestMode = true; // Set to false for production
+  private isTestMode = false; // Production mode enabled
 
   async initialize(): Promise<void> {
     try {

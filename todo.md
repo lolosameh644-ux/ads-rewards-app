@@ -45,6 +45,7 @@
 - [x] إنشاء UnityAdsManager لإدارة الإعلانات
 - [x] ربط Rewarded_Android بزر مشاهدة الإعلان
 - [x] تحديث app.config.ts بإضافة expo-ads-admob plugin
+- [x] تفعيل Production Mode للإعلانات الحقيقية
 
 ## Phase 7: Admin Features
 - [x] إضافة صفحة إدارة المستخدمين
