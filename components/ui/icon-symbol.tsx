@@ -18,6 +18,7 @@ const MAPPING = {
   "paperplane.fill": "send",
   "chevron.left.forwardslash.chevron.right": "code",
   "chevron.right": "chevron-right",
+  "chevron.down": "expand-more",
   "banknote": "account-balance-wallet",
   "person.fill": "person",
   "shield.fill": "admin-panel-settings",
@@ -27,7 +28,10 @@ const MAPPING = {
   "arrow.right": "arrow-forward",
   "checkmark.circle.fill": "check-circle",
   "xmark.circle.fill": "cancel",
+  "xmark": "close",
   "clock.fill": "schedule",
+  "questionmark.circle.fill": "help",
+  "doc.text.fill": "description",
 } as IconMapping;
 
 /**

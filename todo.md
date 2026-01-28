@@ -75,3 +75,10 @@
 - [x] تحديث use-auth hook لدعم Guest mode
 - [x] إضافة بيانات وهمية للاختبار
 - [x] تحديث جميع الشاشات لدعم Guest mode
+
+## Phase 11: FAQ & Terms Pages
+- [x] إنشاء مكون FAQ Accordion
+- [x] إنشاء صفحة FAQ (app/faq.tsx)
+- [x] إنشاء صفحة شروط الاستخدام (app/terms.tsx)
+- [x] إضافة روابط في صفحة Profile
+- [x] تحديث icon-symbol.tsx بالأيقونات الجديدة

@@ -129,6 +129,33 @@ export default function ProfileScreen() {
             </View>
           </View>
 
+          {/* Help & Info Section */}
+          <View className="bg-surface rounded-2xl border border-border overflow-hidden">
+            {/* FAQ Button */}
+            <TouchableOpacity
+              onPress={() => router.push("/faq" as any)}
+              className="flex-row items-center justify-between p-4 border-b border-border active:opacity-70"
+            >
+              <View className="flex-row items-center">
+                <IconSymbol name="questionmark.circle.fill" size={28} color={colors.primary} />
+                <Text className="text-foreground text-lg font-semibold ml-3">الأسئلة الشائعة</Text>
+              </View>
+              <IconSymbol name="arrow.right" size={24} color={colors.muted} />
+            </TouchableOpacity>
+
+            {/* Terms Button */}
+            <TouchableOpacity
+              onPress={() => router.push("/terms" as any)}
+              className="flex-row items-center justify-between p-4 active:opacity-70"
+            >
+              <View className="flex-row items-center">
+                <IconSymbol name="doc.text.fill" size={28} color={colors.primary} />
+                <Text className="text-foreground text-lg font-semibold ml-3">شروط الاستخدام</Text>
+              </View>
+              <IconSymbol name="arrow.right" size={24} color={colors.muted} />
+            </TouchableOpacity>
+          </View>
+
           {/* Admin Button */}
           {user?.role === "admin" && (
             <TouchableOpacity
