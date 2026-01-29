@@ -1,11 +1,11 @@
-import { ScrollView, Text, View, Alert } from "react-native";
+import { ScrollView, Text, View, Alert, TouchableOpacity } from "react-native";
 import { useState } from "react";
 import { ScreenContainer } from "@/components/screen-container";
 import { PointsCard } from "@/components/points-card";
 import { WatchAdButton } from "@/components/watch-ad-button";
+import { BannerAd } from "@/components/banner-ad";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/hooks/use-auth";
-import { TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { useColors } from "@/hooks/use-colors";
 
@@ -115,83 +115,87 @@ export default function HomeScreen() {
   const displayTotalWithdrawn = isGuest ? 0 : points?.totalWithdrawn || 0;
 
   return (
-    <ScreenContainer className="p-6">
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View className="flex-1 gap-6">
-          {/* Header */}
-          <View className="items-center mb-2">
-            <Text className="text-3xl font-bold text-foreground">
-              مرحباً {user?.name || "بك"}
-            </Text>
-            {isGuest && (
-              <View className="bg-warning/10 px-3 py-1 rounded-full mt-2">
-                <Text className="text-warning text-xs font-semibold">وضع التجربة</Text>
+    <View className="flex-1 bg-background">
+      <ScreenContainer className="p-6">
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <View className="flex-1 gap-6">
+            {/* Header */}
+            <View className="items-center mb-2">
+              <Text className="text-3xl font-bold text-foreground">
+                مرحباً {user?.name || "بك"}
+              </Text>
+              {isGuest && (
+                <View className="bg-warning/10 px-3 py-1 rounded-full mt-2">
+                  <Text className="text-warning text-xs font-semibold">وضع التجربة</Text>
+                </View>
+              )}
+              <Text className="text-base text-muted mt-1">شاهد الإعلانات واربح النقاط</Text>
+            </View>
+
+            {/* Points Card */}
+            <PointsCard
+              points={displayPoints}
+              totalEarned={displayTotalEarned}
+              totalWithdrawn={displayTotalWithdrawn}
+            />
+
+            {/* Watch Ad Button */}
+            <WatchAdButton onPress={handleWatchAd} loading={isLoadingAd} />
+
+            {/* Ad Views Counter */}
+            {!isGuest && adViews && (
+              <View className="bg-surface rounded-2xl p-4">
+                <View className="flex-row justify-between items-center">
+                  <View>
+                    <Text className="text-muted text-sm">الإعلانات اليوم</Text>
+                    <Text className="text-foreground text-2xl font-bold">{adViews.today}</Text>
+                  </View>
+                  <View>
+                    <Text className="text-muted text-sm">إجمالي الإعلانات</Text>
+                    <Text className="text-foreground text-2xl font-bold">{adViews.total}</Text>
+                  </View>
+                </View>
               </View>
             )}
-            <Text className="text-base text-muted mt-1">شاهد الإعلانات واربح النقاط</Text>
-          </View>
 
-          {/* Points Card */}
-          <PointsCard
-            points={displayPoints}
-            totalEarned={displayTotalEarned}
-            totalWithdrawn={displayTotalWithdrawn}
-          />
-
-          {/* Watch Ad Button */}
-          <WatchAdButton onPress={handleWatchAd} loading={isLoadingAd} />
-
-          {/* Ad Views Counter */}
-          {!isGuest && adViews && (
-            <View className="bg-surface rounded-2xl p-4">
-              <View className="flex-row justify-between items-center">
-                <View>
-                  <Text className="text-muted text-sm">الإعلانات اليوم</Text>
-                  <Text className="text-foreground text-2xl font-bold">{adViews.today}</Text>
+            {/* Info Cards */}
+            <View className="bg-surface rounded-2xl p-6 border border-border">
+              <Text className="text-foreground text-lg font-semibold mb-3">معلومات مهمة</Text>
+              <View className="gap-3">
+                <View className="flex-row items-center">
+                  <Text className="text-primary text-2xl mr-2">•</Text>
+                  <Text className="text-foreground flex-1">كل 300 نقطة = 1 دولار</Text>
                 </View>
-                <View>
-                  <Text className="text-muted text-sm">إجمالي الإعلانات</Text>
-                  <Text className="text-foreground text-2xl font-bold">{adViews.total}</Text>
+                <View className="flex-row items-center">
+                  <Text className="text-primary text-2xl mr-2">•</Text>
+                  <Text className="text-foreground flex-1">
+                    الحد الأدنى للسحب 900 نقطة = 3 دولار
+                  </Text>
+                </View>
+                <View className="flex-row items-center">
+                  <Text className="text-primary text-2xl mr-2">•</Text>
+                  <Text className="text-foreground flex-1">كل إعلان = نقطة واحدة</Text>
                 </View>
               </View>
             </View>
-          )}
 
-          {/* Info Cards */}
-          <View className="bg-surface rounded-2xl p-6 border border-border">
-            <Text className="text-foreground text-lg font-semibold mb-3">معلومات مهمة</Text>
-            <View className="gap-3">
-              <View className="flex-row items-center">
-                <Text className="text-primary text-2xl mr-2">•</Text>
-                <Text className="text-foreground flex-1">كل 300 نقطة = 1 دولار</Text>
-              </View>
-              <View className="flex-row items-center">
-                <Text className="text-primary text-2xl mr-2">•</Text>
-                <Text className="text-foreground flex-1">
-                  الحد الأدنى للسحب 900 نقطة = 3 دولار
+            {/* Guest Mode Warning */}
+            {isGuest && (
+              <View className="bg-warning/10 rounded-2xl p-4 border border-warning/20">
+                <Text className="text-warning text-sm font-semibold mb-2">
+                  ⚠️ تنبيه: وضع التجربة
+                </Text>
+                <Text className="text-warning text-xs">
+                  أنت تستخدم التطبيق في وضع التجربة. البيانات محلية ولن يتم حفظها. لحفظ أرباحك،
+                  يرجى تسجيل الدخول.
                 </Text>
               </View>
-              <View className="flex-row items-center">
-                <Text className="text-primary text-2xl mr-2">•</Text>
-                <Text className="text-foreground flex-1">كل إعلان = نقطة واحدة</Text>
-              </View>
-            </View>
+            )}
           </View>
-
-          {/* Guest Mode Warning */}
-          {isGuest && (
-            <View className="bg-warning/10 rounded-2xl p-4 border border-warning/20">
-              <Text className="text-warning text-sm font-semibold mb-2">
-                ⚠️ تنبيه: وضع التجربة
-              </Text>
-              <Text className="text-warning text-xs">
-                أنت تستخدم التطبيق في وضع التجربة. البيانات محلية ولن يتم حفظها. لحفظ أرباحك،
-                يرجى تسجيل الدخول.
-              </Text>
-            </View>
-          )}
-        </View>
-      </ScrollView>
-    </ScreenContainer>
+        </ScrollView>
+      </ScreenContainer>
+      {/* Banner Ad at the bottom */}
+      <BannerAd visible={isAuthenticated} />
+    </View>
   );
 }
