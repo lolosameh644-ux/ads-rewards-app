@@ -1,11 +1,10 @@
-import { ScrollView, Text, View, Alert } from "react-native";
+import { ScrollView, Text, View, Alert, TouchableOpacity } from "react-native";
 import { ScreenContainer } from "@/components/screen-container";
 import { WithdrawalForm } from "@/components/withdrawal-form";
 import { WithdrawalRequestCard } from "@/components/withdrawal-request-card";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/hooks/use-auth";
 import { router } from "expo-router";
-import { TouchableOpacity } from "react-native";
 
 export default function WithdrawScreen() {
   const { isAuthenticated, loading: authLoading } = useAuth();

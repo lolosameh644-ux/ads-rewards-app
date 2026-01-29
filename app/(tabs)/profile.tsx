@@ -27,8 +27,13 @@ export default function ProfileScreen() {
         text: "تسجيل الخروج",
         style: "destructive",
         onPress: async () => {
-          await logout();
-          router.replace("/");
+          try {
+            await logout();
+            router.replace("/auth");
+          } catch (error) {
+            console.error("Logout error:", error);
+            Alert.alert("خطأ", "حدث خطأ أثناء تسجيل الخروج");
+          }
         },
       },
     ]);

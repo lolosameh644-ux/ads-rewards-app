@@ -49,8 +49,7 @@ export const appRouter = router({
         // Record ad view
         await db.recordAdView({
           userId: ctx.user.id,
-          adId: input.adId,
-          pointsEarned: input.points,
+          adId: input.adId || "unknown",
         });
 
         return { success: true };

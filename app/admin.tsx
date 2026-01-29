@@ -14,14 +14,14 @@ export default function AdminScreen() {
 
   // Get all users
   const { data: users, refetch: refetchUsers } = trpc.admin.users.useQuery(undefined, {
-    enabled: isAuthenticated && user && 'isAdmin' in user && user.isAdmin,
+    enabled: !!(isAuthenticated && user && 'isAdmin' in user && user.isAdmin),
   });
 
   // Get all withdrawal requests
   const { data: withdrawals, refetch: refetchWithdrawals } = trpc.admin.withdrawals.useQuery(
     undefined,
     {
-      enabled: isAuthenticated && user && 'isAdmin' in user && user.isAdmin,
+      enabled: !!(isAuthenticated && user && 'isAdmin' in user && user.isAdmin),
     }
   );
 
