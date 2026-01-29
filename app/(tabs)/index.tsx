@@ -39,7 +39,7 @@ export default function HomeScreen() {
 
   const handleWatchAd = async () => {
     if (!isAuthenticated) {
-      Alert.alert("تسجيل الدخول مطلوب", "يرجى تسجيل الدخول أولاً لمشاهدة الإعلانات");
+      router.push("/simple-login");
       return;
     }
 
