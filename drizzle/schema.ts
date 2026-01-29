@@ -76,3 +76,25 @@ export const adViews = mysqlTable("ad_views", {
 
 export type AdView = typeof adViews.$inferSelect;
 export type InsertAdView = typeof adViews.$inferInsert;
+
+/**
+ * Ads table - stores advertisement data
+ */
+export const ads = mysqlTable("ads", {
+  id: varchar("id", { length: 255 }).primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  imageUrl: varchar("imageUrl", { length: 500 }),
+  videoUrl: varchar("videoUrl", { length: 500 }),
+  advertiserName: varchar("advertiserName", { length: 255 }).notNull(),
+  advertiserLogo: varchar("advertiserLogo", { length: 500 }),
+  rewardPoints: int("rewardPoints").default(1).notNull(),
+  duration: int("duration").default(30).notNull(), // duration in seconds
+  isActive: boolean("isActive").default(true).notNull(),
+  targetCountry: varchar("targetCountry", { length: 10 }).default("EG").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Ad = typeof ads.$inferSelect;
+export type InsertAd = typeof ads.$inferInsert;

@@ -22,6 +22,13 @@
       "when": 1769632098860,
       "tag": "0002_amazing_steve_rogers",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1769688342250,
+      "tag": "0003_colossal_shadow_king",
+      "breakpoints": true
     }
   ]
 }

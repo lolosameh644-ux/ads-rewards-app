@@ -6,6 +6,8 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
+import * as db from "../db";
+import { sdk } from "./sdk";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise((resolve) => {
@@ -66,19 +68,39 @@ async function startServer() {
       if (!email || !password) {
         return res.status(400).json({ error: "Email and password required" });
       }
-      const token = Buffer.from(`${email}:${password}`).toString("base64");
+
+      // Create a simple openId from email for local testing
+      const openId = `local_${Buffer.from(email).toString("base64").slice(0, 20)}`;
+      const name = email.split("@")[0];
+
+      // Create or update user in database
+      await db.upsertUser({
+        openId,
+        email,
+        name,
+        loginMethod: "email",
+        lastSignedIn: new Date(),
+      });
+
+      // Create JWT token
+      const token = await sdk.createSessionToken(openId, { name });
+
+      // Get user from database
+      const user = await db.getUserByOpenId(openId);
+
       res.json({
         success: true,
         token,
         user: {
-          id: 1,
+          id: user?.id || 1,
           email,
-          name: email.split("@")[0],
-          role: "user",
+          name,
+          role: user?.role || "user",
           lastSignedIn: new Date(),
         },
       });
     } catch (error) {
+      console.error("[Login] Error:", error);
       res.status(500).json({ error: "Login failed" });
     }
   });
