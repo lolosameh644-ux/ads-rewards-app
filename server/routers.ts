@@ -4,12 +4,39 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import * as db from "./db";
+import { sdk } from "./_core/sdk";
 
 export const appRouter = router({
   // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
   auth: router({
     me: publicProcedure.query((opts) => opts.ctx.user),
+    
+    login: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        password: z.string().min(1),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (!input.email || !input.password) {
+          throw new Error("البريد وكلمة المرور مطلوبان");
+        }
+        await db.upsertUser({
+          openId: input.email,
+          email: input.email,
+          name: input.email.split("@")[0],
+          loginMethod: "email",
+        });
+        const user = await db.getUserByOpenId(input.email);
+        if (!user) {
+          throw new Error("Failed to create user");
+        }
+        const token = await sdk.createSessionToken(input.email, { name: user.name || "" });
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(COOKIE_NAME, token, cookieOptions);
+        return { success: true, user, token };
+      }),
+    
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });

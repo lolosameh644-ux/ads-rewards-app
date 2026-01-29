@@ -27,7 +27,11 @@ export function createTRPCClient() {
         transformer: superjson,
         async headers() {
           const token = await Auth.getSessionToken();
-          return token ? { Authorization: `Bearer ${token}` } : {};
+          let finalToken = token;
+          if (!finalToken && typeof window !== "undefined") {
+            finalToken = window.localStorage?.getItem("simple_auth_token") || null;
+          }
+          return finalToken ? { Authorization: `Bearer ${finalToken}` } : {};
         },
         // Custom fetch to include credentials for cookie-based auth
         fetch(url, options) {

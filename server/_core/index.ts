@@ -60,6 +60,33 @@ async function startServer() {
     res.json({ ok: true, timestamp: Date.now() });
   });
 
+  app.post("/api/login", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      if (!email || !password) {
+        return res.status(400).json({ error: "Email and password required" });
+      }
+      const token = Buffer.from(`${email}:${password}`).toString("base64");
+      res.json({
+        success: true,
+        token,
+        user: {
+          id: 1,
+          email,
+          name: email.split("@")[0],
+          role: "user",
+          lastSignedIn: new Date(),
+        },
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Login failed" });
+    }
+  });
+
+  app.post("/api/logout", (req, res) => {
+    res.json({ success: true });
+  });
+
   app.use(
     "/api/trpc",
     createExpressMiddleware({
