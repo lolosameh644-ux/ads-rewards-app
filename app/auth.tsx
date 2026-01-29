@@ -3,9 +3,9 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from "reac
 import { ScreenContainer } from "@/components/screen-container";
 import { useColors } from "@/hooks/use-colors";
 import { router } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { simpleLogin, simpleSignup } from "@/lib/simple-auth";
 
-export default function SimpleLoginScreen() {
+export default function AuthScreen() {
   const colors = useColors();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
@@ -14,40 +14,18 @@ export default function SimpleLoginScreen() {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    if (!email || !password) {
-      Alert.alert("خطأ", "يرجى ملء جميع الحقول");
-      return;
-    }
-
-    if (!isLogin && !name) {
-      Alert.alert("خطأ", "يرجى إدخال اسمك");
-      return;
-    }
-
-    setLoading(true);
-
     try {
+      setLoading(true);
+
       if (isLogin) {
-        // Simple login - just store credentials
-        await AsyncStorage.setItem("user_email", email);
-        await AsyncStorage.setItem("user_name", email.split("@")[0]);
-        await AsyncStorage.setItem("user_id", Math.random().toString());
-        await AsyncStorage.setItem("is_admin", email === "youseef500600700800@gmail.com" ? "true" : "false");
-        
-        Alert.alert("تم!", "تم تسجيل الدخول بنجاح");
+        await simpleLogin(email, password);
         router.replace("/(tabs)");
       } else {
-        // Simple signup
-        await AsyncStorage.setItem("user_email", email);
-        await AsyncStorage.setItem("user_name", name);
-        await AsyncStorage.setItem("user_id", Math.random().toString());
-        await AsyncStorage.setItem("is_admin", "false");
-        
-        Alert.alert("تم!", "تم إنشاء الحساب بنجاح");
+        await simpleSignup(email, password, name);
         router.replace("/(tabs)");
       }
-    } catch (error) {
-      Alert.alert("خطأ", "حدث خطأ ما");
+    } catch (error: any) {
+      Alert.alert("خطأ", error.message || "حدث خطأ ما");
     } finally {
       setLoading(false);
     }
@@ -78,8 +56,8 @@ export default function SimpleLoginScreen() {
                   placeholderTextColor={colors.muted}
                   value={name}
                   onChangeText={setName}
-                  className="bg-surface border border-border rounded-lg px-4 py-3 text-foreground"
                   editable={!loading}
+                  className="bg-surface border border-border rounded-lg px-4 py-3 text-foreground"
                 />
               </View>
             )}
@@ -94,8 +72,8 @@ export default function SimpleLoginScreen() {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
-                className="bg-surface border border-border rounded-lg px-4 py-3 text-foreground"
                 editable={!loading}
+                className="bg-surface border border-border rounded-lg px-4 py-3 text-foreground"
               />
             </View>
 
@@ -108,8 +86,8 @@ export default function SimpleLoginScreen() {
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
-                className="bg-surface border border-border rounded-lg px-4 py-3 text-foreground"
                 editable={!loading}
+                className="bg-surface border border-border rounded-lg px-4 py-3 text-foreground"
               />
             </View>
           </View>

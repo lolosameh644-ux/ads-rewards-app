@@ -39,7 +39,7 @@ export default function HomeScreen() {
 
   const handleWatchAd = async () => {
     if (!isAuthenticated) {
-      router.push("/simple-login");
+      router.push("/auth");
       return;
     }
 
@@ -89,7 +89,7 @@ export default function HomeScreen() {
 
             {/* Login Button */}
             <TouchableOpacity
-              onPress={() => router.push("/oauth/callback")}
+              onPress={() => router.push("/auth")}
               className="w-full bg-primary px-8 py-4 rounded-full active:opacity-80"
             >
               <Text className="text-white font-bold text-lg text-center">تسجيل الدخول</Text>

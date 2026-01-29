@@ -59,7 +59,7 @@ export default function WithdrawScreen() {
             يرجى تسجيل الدخول لعرض صفحة السحب والحصول على أرباحك
           </Text>
           <TouchableOpacity
-            onPress={() => router.push("/oauth/callback")}
+            onPress={() => router.push("/auth")}
             className="bg-primary px-8 py-4 rounded-full mt-4 active:opacity-80"
           >
             <Text className="text-white font-bold text-lg">تسجيل الدخول</Text>
