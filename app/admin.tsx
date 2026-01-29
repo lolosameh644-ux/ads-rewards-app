@@ -14,14 +14,14 @@ export default function AdminScreen() {
 
   // Get all users
   const { data: users, refetch: refetchUsers } = trpc.admin.users.useQuery(undefined, {
-    enabled: isAuthenticated && user?.role === "admin",
+    enabled: isAuthenticated && user && 'isAdmin' in user && user.isAdmin,
   });
 
   // Get all withdrawal requests
   const { data: withdrawals, refetch: refetchWithdrawals } = trpc.admin.withdrawals.useQuery(
     undefined,
     {
-      enabled: isAuthenticated && user?.role === "admin",
+      enabled: isAuthenticated && user && 'isAdmin' in user && user.isAdmin,
     }
   );
 
@@ -94,7 +94,7 @@ export default function AdminScreen() {
     );
   }
 
-  if (!isAuthenticated || user?.role !== "admin") {
+  if (!isAuthenticated || !user || !('isAdmin' in user) || !user.isAdmin) {
     return (
       <ScreenContainer className="items-center justify-center p-6">
         <View className="items-center gap-4">
