@@ -39,7 +39,7 @@ export function useAuth() {
   }, []);
 
   const isAuthenticated = Boolean(user);
-  const isAdmin = isAuthenticated && user && (user.role === 'admin' || user.email === 'youseef500600700800@gmail.com');
+  const isAdmin = isAuthenticated && user && user.email === 'youseef500600700800@gmail.com';
 
   return {
     user,

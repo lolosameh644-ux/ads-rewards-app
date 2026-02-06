@@ -1,5 +1,5 @@
 import { ScrollView, Text, View, Alert, TouchableOpacity } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ScreenContainer } from "@/components/screen-container";
 import { PointsCard } from "@/components/points-card";
 import { WatchAdButton } from "@/components/watch-ad-button";
@@ -11,8 +11,15 @@ import { useColors } from "@/hooks/use-colors";
 
 export default function HomeScreen() {
   const colors = useColors();
-  const { user, isAuthenticated, loading: authLoading, isGuest } = useAuth();
+  const { user, isAuthenticated, loading: authLoading, isGuest, refresh } = useAuth();
   const [isLoadingAd, setIsLoadingAd] = useState(false);
+
+  // Refresh user data on mount to ensure points and role are up to date
+  useEffect(() => {
+    if (isAuthenticated) {
+      refresh();
+    }
+  }, []);
   const [guestPoints, setGuestPoints] = useState(0);
 
   // Get user points (only for authenticated users)

@@ -168,6 +168,14 @@ export async function getStoredToken(): Promise<string | null> {
 }
 
 export async function logout(): Promise<void> {
+  if (Platform.OS === "web") {
+    window.localStorage.removeItem(STORAGE_KEY);
+    window.localStorage.removeItem(TOKEN_KEY);
+  } else {
+    await AsyncStorage.removeItem(STORAGE_KEY);
+    await AsyncStorage.removeItem(TOKEN_KEY);
+  }
+
   try {
     await fetch(`${getApiBaseUrl()}/api/logout`, {
       method: "POST",
@@ -178,13 +186,5 @@ export async function logout(): Promise<void> {
     });
   } catch (error) {
     console.error("[Auth] Logout API error:", error);
-  }
-
-  if (Platform.OS === "web") {
-    window.localStorage.removeItem(STORAGE_KEY);
-    window.localStorage.removeItem(TOKEN_KEY);
-  } else {
-    await AsyncStorage.removeItem(STORAGE_KEY);
-    await AsyncStorage.removeItem(TOKEN_KEY);
   }
 }
