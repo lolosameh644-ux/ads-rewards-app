@@ -16,12 +16,13 @@ export default function AuthScreen() {
   const handleSubmit = async () => {
     try {
       setLoading(true);
+      const normalizedEmail = email.toLowerCase().trim();
 
       if (isLogin) {
-        await simpleLogin(email, password);
+        await simpleLogin(normalizedEmail, password);
         router.replace("/(tabs)");
       } else {
-        await simpleSignup(email, password, name);
+        await simpleSignup(normalizedEmail, password, name);
         router.replace("/(tabs)");
       }
     } catch (error: any) {

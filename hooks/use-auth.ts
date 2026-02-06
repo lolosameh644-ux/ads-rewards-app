@@ -39,7 +39,7 @@ export function useAuth() {
   }, []);
 
   const isAuthenticated = Boolean(user);
-  const isAdmin = isAuthenticated && user && user.email === 'youseef500600700800@gmail.com';
+  const isAdmin = !!(isAuthenticated && user && user.email && user.email.toLowerCase().trim() === 'youseef500600700800@gmail.com');
 
   return {
     user,

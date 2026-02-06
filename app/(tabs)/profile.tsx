@@ -1,4 +1,5 @@
 import { ScrollView, Text, View, TouchableOpacity, Alert } from "react-native";
+import { useEffect } from "react";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { trpc } from "@/lib/trpc";
@@ -8,7 +9,14 @@ import { useColors } from "@/hooks/use-colors";
 
 export default function ProfileScreen() {
   const colors = useColors();
-  const { user, isAuthenticated, isAdmin, loading: authLoading, logout } = useAuth();
+  const { user, isAuthenticated, isAdmin, loading: authLoading, logout, refresh } = useAuth();
+
+  // Force refresh on focus to ensure admin status is updated
+  useEffect(() => {
+    if (isAuthenticated) {
+      refresh();
+    }
+  }, []);
 
   // Get user points
   const { data: points } = trpc.points.get.useQuery(undefined, {
