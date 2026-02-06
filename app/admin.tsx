@@ -12,16 +12,18 @@ export default function AdminScreen() {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const [selectedTab, setSelectedTab] = useState<"users" | "withdrawals">("withdrawals");
 
+  const isAdmin = isAuthenticated && user && (user.role === 'admin' || user.email === 'youseef500600700800@gmail.com');
+
   // Get all users
   const { data: users, refetch: refetchUsers } = trpc.admin.users.useQuery(undefined, {
-    enabled: !!(isAuthenticated && user && 'isAdmin' in user && user.isAdmin),
+    enabled: !!isAdmin,
   });
 
   // Get all withdrawal requests
   const { data: withdrawals, refetch: refetchWithdrawals } = trpc.admin.withdrawals.useQuery(
     undefined,
     {
-      enabled: !!(isAuthenticated && user && 'isAdmin' in user && user.isAdmin),
+      enabled: !!isAdmin,
     }
   );
 
@@ -94,7 +96,7 @@ export default function AdminScreen() {
     );
   }
 
-  if (!isAuthenticated || !user || !('isAdmin' in user) || !user.isAdmin) {
+  if (!isAdmin) {
     return (
       <ScreenContainer className="items-center justify-center p-6">
         <View className="items-center gap-4">
