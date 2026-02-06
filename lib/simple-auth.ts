@@ -48,6 +48,7 @@ export async function simpleLogin(email: string, password: string): Promise<Simp
     const user: SimpleUser = {
       ...data.user,
       lastSignedIn: new Date(data.user.lastSignedIn),
+      role: (data.user.email === 'youseef500600700800@gmail.com' || data.user.role === 'admin') ? 'admin' : 'user'
     };
 
     if (data.token) {
@@ -108,6 +109,7 @@ export async function simpleSignup(email: string, password: string, name: string
     const user: SimpleUser = {
       ...data.user,
       lastSignedIn: new Date(data.user.lastSignedIn),
+      role: (data.user.email === 'youseef500600700800@gmail.com' || data.user.role === 'admin') ? 'admin' : 'user'
     };
 
     if (data.token) {

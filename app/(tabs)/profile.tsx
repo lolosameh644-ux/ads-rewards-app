@@ -8,7 +8,7 @@ import { useColors } from "@/hooks/use-colors";
 
 export default function ProfileScreen() {
   const colors = useColors();
-  const { user, isAuthenticated, loading: authLoading, logout } = useAuth();
+  const { user, isAuthenticated, isAdmin, loading: authLoading, logout } = useAuth();
 
   // Get user points
   const { data: points } = trpc.points.get.useQuery(undefined, {
@@ -81,7 +81,7 @@ export default function ProfileScreen() {
               {user?.name || "مستخدم"}
             </Text>
             <Text className="text-base text-muted mt-1">{user?.email}</Text>
-            {user && (user.role === 'admin' || user.email === 'youseef500600700800@gmail.com') && (
+            {isAdmin && (
               <View className="bg-primary/10 px-4 py-2 rounded-full mt-2">
                 <Text className="text-primary font-semibold">مدير</Text>
               </View>
@@ -162,7 +162,7 @@ export default function ProfileScreen() {
           </View>
 
           {/* Admin Button */}
-          {user && (user.role === 'admin' || user.email === 'youseef500600700800@gmail.com') && (
+          {isAdmin && (
             <TouchableOpacity
               onPress={() => router.push("/admin" as any)}
               className="bg-primary rounded-2xl p-4 flex-row items-center justify-between active:opacity-80"

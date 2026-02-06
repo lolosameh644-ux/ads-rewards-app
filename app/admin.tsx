@@ -9,10 +9,8 @@ import { useColors } from "@/hooks/use-colors";
 
 export default function AdminScreen() {
   const colors = useColors();
-  const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const { user, isAuthenticated, isAdmin, loading: authLoading } = useAuth();
   const [selectedTab, setSelectedTab] = useState<"users" | "withdrawals">("withdrawals");
-
-  const isAdmin = isAuthenticated && user && (user.role === 'admin' || user.email === 'youseef500600700800@gmail.com');
 
   // Get all users
   const { data: users, refetch: refetchUsers } = trpc.admin.users.useQuery(undefined, {

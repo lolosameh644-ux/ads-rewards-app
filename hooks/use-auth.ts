@@ -39,12 +39,14 @@ export function useAuth() {
   }, []);
 
   const isAuthenticated = Boolean(user);
+  const isAdmin = isAuthenticated && user && (user.role === 'admin' || user.email === 'youseef500600700800@gmail.com');
 
   return {
     user,
     loading,
     error,
     isAuthenticated,
+    isAdmin,
     isGuest: false,
     refresh: async () => {
       const storedUser = await getStoredUser();
