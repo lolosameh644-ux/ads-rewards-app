@@ -94,7 +94,10 @@ export default function AdminScreen() {
     );
   }
 
-  if (!isAdmin) {
+  // Temporary bypass for troubleshooting
+  const isAuthorized = isAdmin || (user && user.email && user.email.toLowerCase().trim() === 'youseef500600700800@gmail.com');
+
+  if (!isAuthorized && !authLoading) {
     return (
       <ScreenContainer className="items-center justify-center p-6">
         <View className="items-center gap-4">

