@@ -23,13 +23,19 @@ export default function HomeScreen() {
   const [guestPoints, setGuestPoints] = useState(0);
 
   // Get user points (only for authenticated users)
+  // Refetch every 5 seconds to keep points updated
   const { data: points, refetch: refetchPoints } = trpc.points.get.useQuery(undefined, {
     enabled: isAuthenticated && !isGuest,
+    refetchInterval: 5000, // Refetch every 5 seconds
+    staleTime: 0, // Always consider data stale
   });
 
   // Get ad views count (only for authenticated users)
+  // Refetch every 5 seconds to keep ad views updated
   const { data: adViews, refetch: refetchAdViews } = trpc.points.adViews.useQuery(undefined, {
     enabled: isAuthenticated && !isGuest,
+    refetchInterval: 5000, // Refetch every 5 seconds
+    staleTime: 0, // Always consider data stale
   });
 
   // Add points mutation (only for authenticated users)
